@@ -1,0 +1,53 @@
+library(fpp)
+library(fpp2)
+library(TTR)
+
+
+data = fpp::cafe
+
+# Data is Quarterly expenditure on eating out and take away food in Australia from 1982 to 2010
+#We can observe that there is a trend in the time series and it is constantly increasing through the quarters.
+
+
+head(data)
+plot(data)
+stl_decomp <- stl(data,s.window ="periodic")
+plot(stl_decomp)
+attributes(stl_decomp)
+
+
+#We can see that the decomposition model used here is the additive model 
+#as the seasonal component remains the same throughout.
+
+# Lets print out a seasonal adjustment
+s1 = seasadj(stl_decomp)
+# Plot a line on the graph
+plot(data)
+lines(seasadj(stl_decomp), col="Red")
+
+#We can see that the seasonality component removal makes the new data oscillate 
+#above and below the actual data as the seasonality was oscillatory 
+#between -100 and 100 
+
+# Default period forecast
+f_stl <- forecast(stl_decomp)
+# you can pass the # of period
+f_stl <- forecast(stl_decomp,h=15)
+f_stl
+plot(f_stl)
+# There is more than one way to do things
+decomp_data <- decompose(data)
+
+# Each one shows different attributes 
+attributes(decomp_data)
+s2 = seasadj(decomp_data)
+
+
+#Plotting seasonal adjusted data with both the methods
+plot(s1)
+lines(s2, col="Red")
+
+#We see that both the methods yield approx same results for this data set
+
+
+
